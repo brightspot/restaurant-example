@@ -4,6 +4,14 @@ schema {
 }
 
 """
+Specifies if debugging should be enabled for the field. This applies to the current field and all its sub-fields, unless it's redefined with a new value further down the field hierarchy. When enabled, any debugging information captured will be present in the extensions part of the response.
+"""
+directive @debug(if: Boolean) on FIELD | FRAGMENT_DEFINITION | FRAGMENT_SPREAD | INLINE_FRAGMENT | MUTATION | QUERY | SUBSCRIPTION
+
+"""Provides Field Generator information."""
+directive @field_generator(class: String) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+"""
 Marks a field as being backed by a getter method, and therefore the value returned may not match what is stored on the raw state. To instead access the raw state data, the @gca_raw directive can be used on the query field.
 """
 directive @gca_getter on FIELD_DEFINITION
@@ -33,6 +41,14 @@ directive @gca_schema_types(names: String) on INPUT_OBJECT | SCALAR
 Specifies if the raw SDL should be included in the response extensions. Introspection queries must be allowed in order for it to take effect.
 """
 directive @sdl(if: Boolean) on QUERY
+
+"""Provides Type Generator information."""
+directive @type_generator(class: String, id: ID) on ENUM | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+
+"""Provides Type origin information."""
+directive @type_origin(implementedBy: String, implements: String, passedTo: String, possibleTypeOf: String, returnedFrom: String) on ENUM | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | UNION
+
+directive @type_stats(directiveCount: Int, enumCount: Int, inputCount: Int, interfaceCount: Int, reservedTypeGeneratorCount: Int, scalarCount: Int, totalCount: Int, typeCount: Int, typeGeneratorCounts: [TypeGeneratorStats], unionCount: Int) on SCHEMA
 
 enum AngularUnit {
   """tk tk tk"""
@@ -1063,6 +1079,11 @@ input TransactionInput {
 type TransactionResult {
   results: [TransactionContentActionResult!]!
   status: String
+}
+
+input TypeGeneratorStats {
+  className: String
+  count: Int
 }
 
 type URLs {

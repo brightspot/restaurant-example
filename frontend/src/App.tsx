@@ -14,6 +14,7 @@ import ServiceStatus from './components/ServiceStatus'
 import {getContentService, getRestaurantService} from './services'
 import type { PageContent } from './models/page-content'
 import type { Restaurant } from './types'
+import { DebugPanel } from "./components/debug";
 
 const { Header, Content, Footer } = Layout
 const { Title } = Typography
@@ -140,6 +141,7 @@ function App() {
         {pageContent?.footer?.copyright || 'Restaurant Demo - Brightspot CMS'}
       </Footer>
       <ServiceStatus />
+      <DebugPanel />
     </Layout>
   )
 }

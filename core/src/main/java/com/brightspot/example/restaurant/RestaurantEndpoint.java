@@ -31,6 +31,8 @@ public class RestaurantEndpoint extends GCAEndpoint implements Singleton {
 
             .fieldFilter(field -> field.getParentType() != null)
 
+            .includeDebugDirectives()
+
             .build();
     }
 
@@ -39,5 +41,7 @@ public class RestaurantEndpoint extends GCAEndpoint implements Singleton {
         super.updateCorsConfiguration(corsConfiguration);
 
         corsConfiguration.addAllowedOrigin("localhost");
+
+        corsConfiguration.addAllowedHeader("x-debug");
     }
 }

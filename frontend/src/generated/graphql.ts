@@ -854,6 +854,11 @@ export type TransactionResult = {
   status?: Maybe<Scalars['String']['output']>;
 };
 
+export type TypeGeneratorStats = {
+  className?: InputMaybe<Scalars['String']['input']>;
+  count?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type UrLs = {
   __typename: 'URLs';
   paths: Array<UrLsPath>;
