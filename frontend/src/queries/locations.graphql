@@ -1,0 +1,22 @@
+query GetLocations {
+  Query {
+    Records(from: {type: RestaurantLocation}) {
+      items {
+        _id
+        __typename
+        ... on RestaurantLocation {
+          name
+          address
+          phoneNumber
+          openHours
+          parkingInfo
+          accessibilityInfo
+          isMainLocation
+          image {
+            publicUrl
+          }
+        }
+      }
+    }
+  }
+}

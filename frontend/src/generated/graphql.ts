@@ -609,6 +609,43 @@ export type HealthCheckQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type HealthCheckQuery = { __typename: 'RootQuery' };
 
+export type GetLocationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLocationsQuery = (
+  { __typename: 'RootQuery' }
+  & { Query?: Maybe<(
+    { __typename: 'QueryEntry' }
+    & { Records?: Maybe<(
+      { __typename: 'QuerySelect' }
+      & { items: Array<
+        | (
+          { __typename: 'Restaurant' }
+          & Pick<Restaurant, '_id'>
+        )
+        | (
+          { __typename: 'RestaurantLocation' }
+          & Pick<
+            RestaurantLocation,
+            | 'name'
+            | 'address'
+            | 'phoneNumber'
+            | 'openHours'
+            | 'parkingInfo'
+            | 'accessibilityInfo'
+            | 'isMainLocation'
+            | '_id'
+          >
+          & { image?: Maybe<(
+            { __typename: 'StorageItem' }
+            & Pick<StorageItem, 'publicUrl'>
+          )> }
+        )
+      > }
+    )> }
+  )> }
+);
+
 export type GetRestaurantQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -638,4 +675,5 @@ export type GetRestaurantQuery = (
 
 
 export const HealthCheckDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HealthCheck"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]} as unknown as DocumentNode<HealthCheckQuery, HealthCheckQueryVariables>;
+export const GetLocationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLocations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Query"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"from"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"EnumValue","value":"RestaurantLocation"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RestaurantLocation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}},{"kind":"Field","name":{"kind":"Name","value":"openHours"}},{"kind":"Field","name":{"kind":"Name","value":"parkingInfo"}},{"kind":"Field","name":{"kind":"Name","value":"accessibilityInfo"}},{"kind":"Field","name":{"kind":"Name","value":"isMainLocation"}},{"kind":"Field","name":{"kind":"Name","value":"image"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"publicUrl"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLocationsQuery, GetLocationsQueryVariables>;
 export const GetRestaurantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRestaurant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Get"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Singleton"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Restaurant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"State"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"website"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetRestaurantQuery, GetRestaurantQueryVariables>;
