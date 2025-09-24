@@ -33,6 +33,24 @@ Specifies if the raw SDL should be included in the response extensions. Introspe
 """
 directive @sdl(if: Boolean) on QUERY
 
+enum AngularUnit {
+  """tk tk tk"""
+  DEGREES
+
+  """tk tk tk"""
+  METERS
+
+  """tk tk tk"""
+  RADIANS
+}
+
+""""""
+type CompositeImageFilter {
+  filters: [CompositeImageFilterType!]!
+}
+
+union CompositeImageFilterType = GrayscaleFilter | InvertFilter | SepiaFilter
+
 """Represents a generic content."""
 interface Content implements Record & Recordable {
   """
@@ -46,8 +64,78 @@ interface Content implements Record & Recordable {
   _label: String
 }
 
+input FromAllInput {
+  _: Void
+}
+
+input FromInput {
+  """Corresponds to the Java method `Query#fromAll`."""
+  all: FromAllInput
+
+  """Corresponds to the Java method `Query#from`."""
+  class: ID
+
+  """Corresponds to the Java method `Query#fromGroup`."""
+  group: ID
+
+  """Corresponds to the Java method `Query#fromType`."""
+  type: QueryFromType
+
+  """Corresponds to the Java method `Query#fromType`."""
+  typeId: UUID
+}
+
+"""tk tk tk"""
+input GeoAreaInput {
+  geometry: GeoMultiPolygonInput
+}
+
+input GeoCircleInput {
+  center: GeoPointInput!
+  radiusUnit: AngularUnit!
+  radiusValue: Float!
+}
+
+""""""
+input GeoLinearPolygonInput {
+  holes: [GeoLinearRingInput!]
+  ring: GeoLinearRingInput!
+}
+
+""""""
+input GeoLinearRingInput {
+  points: [GeoPointInput!]!
+}
+
+""""""
+input GeoMultiPolygonInput {
+  polygons: [GeoPolygonInput!]!
+}
+
+type GeoPoint {
+  latitude: Float
+  longitude: Float
+}
+
+input GeoPointInput {
+  latitude: Float!
+  longitude: Float!
+}
+
+""""""
+input GeoPolygonInput {
+  circle: GeoCircleInput
+  polygon: GeoLinearPolygonInput
+}
+
 """A type with fields providing the ability to fetch a single record."""
 type GetEntry {
+  """Provides the ability to fetch a `Recordable` by a unique identifier."""
+  Record(
+    """Accepts inputs for unique identifiers, such as an ID or URL."""
+    with: RecordGetInput!
+  ): RecordGet
+
   """Provides the ability to fetch a `Singleton` instance."""
   Singleton: GetSingleton
 }
@@ -57,11 +145,320 @@ type GetSingleton {
   Restaurant: RestaurantGet
 }
 
+""""""
+type GrayscaleFilter {
+  _: Void
+}
+
+""""""
+type ImageCropBoundingBox {
+  """"""
+  height: Float!
+
+  """"""
+  width: Float!
+
+  """"""
+  x: Float!
+
+  """"""
+  y: Float!
+}
+
+""""""
+type ImageCropNamed {
+  """"""
+  bounds: ImageCropBoundingBox!
+
+  """"""
+  name: String!
+}
+
+""""""
+type ImageCrops {
+  """"""
+  box(name: String!): ImageCropNamed
+
+  """"""
+  boxes: [ImageCropNamed!]!
+}
+
+""""""
+type ImageEdits {
+  """"""
+  brightness: Float!
+
+  """"""
+  contrast: Float!
+
+  """"""
+  filter: ImageFilter
+
+  """"""
+  flipH: Boolean!
+
+  """"""
+  flipV: Boolean!
+
+  """"""
+  rotate: Int!
+
+  """"""
+  sharpen: Int!
+}
+
+""""""
+union ImageFilter = CompositeImageFilter | GrayscaleFilter | InvertFilter | SepiaFilter
+
+""""""
+type ImageFocusGroup {
+  """"""
+  coordinates: ImageFocusPoint!
+
+  """"""
+  name: String!
+}
+
+""""""
+type ImageFocusPoint {
+  x: Float!
+  y: Float!
+}
+
+""""""
+type ImageFocuses {
+  """"""
+  default: ImageFocusPoint
+
+  """"""
+  point(name: String!): ImageFocusGroup
+
+  """"""
+  points: [ImageFocusGroup!]!
+}
+
+"""An image's EXIF orientation."""
+enum ImageOrientation {
+  """Unknown"""
+  EXIF_0_UNKNOWN
+
+  """Normal"""
+  EXIF_1_TOP_LEFT
+
+  """Mirror horizontally"""
+  EXIF_2_TOP_RIGHT
+
+  """Rotate 180°"""
+  EXIF_3_BOTTOM_RIGHT
+
+  """Mirror vertically"""
+  EXIF_4_BOTTOM_LEFT
+
+  """Mirror horizontally, rotate 270° clockwise"""
+  EXIF_5_LEFT_TOP
+
+  """Rotate 90° clockwise"""
+  EXIF_6_RIGHT_TOP
+
+  """Mirror horizontally, rotate 90° clockwise"""
+  EXIF_7_RIGHT_BOTTOM
+
+  """Rotate 270° clockwise"""
+  EXIF_8_LEFT_BOTTOM
+}
+
+""""""
+type InvertFilter {
+  _: Void
+}
+
+"""A JSON scalar"""
+scalar Json
+
 """A 64-bit signed integer"""
 scalar Long
 
+"""
+Metadata about a page of query results that can help to inform how to fetch subsequent pages as well as present the data to an end user.
+"""
+type PageInfo {
+  """The total number of results available in the query."""
+  count: Long!
+
+  """The 1-based offset of the first item on the current page."""
+  firstItemIndex: Long!
+
+  """The offset for the first page of results. This is always zero."""
+  firstOffset: Long!
+
+  """True if there is a next page of results, false otherwise."""
+  hasNext: Boolean!
+
+  """True if there are any pages with results, false otherwise."""
+  hasPages: Boolean!
+
+  """True if there is a previous page of results, false otherwise."""
+  hasPrevious: Boolean!
+
+  """The 1-based offset of the last item on the current page."""
+  lastItemIndex: Long!
+
+  """The offset for the last page of results."""
+  lastOffset: Long!
+
+  """The maximum number of results to fetch in a single query."""
+  limit: Int!
+
+  """The offset for the next page of results."""
+  nextOffset: Long!
+
+  """
+  Gets the current database time. This value can be used as input to save mutations via the lastRead argument as a safeguard against accidentally overwriting data with stale content.
+  """
+  now: Long!
+
+  """The offset of the current page in the overall query results."""
+  offset: Long!
+
+  """The total number of pages available in the query."""
+  pageCount: Long!
+
+  """The current page number within this result set."""
+  pageIndex: Long!
+
+  """
+  The offset for the previous page of results. If there is no previous page, then zero is returned.
+  """
+  previousOffset: Long!
+}
+
 interface PathsField {
   _urls: URLs!
+}
+
+type QueryEntry {
+  """Provides fields for accessing the Dari `Query` API."""
+  Records(
+    """Allows for specifying the source type(s) for the `Query`."""
+    from: FromInput!
+
+    """Allows for specifying the **having** predicate for the `Query`."""
+    having: QueryPredicateInput
+
+    """Allows for specifying the pagination **limit** for the `Query` result."""
+    limit: Int
+
+    """
+    Allows for specifying the pagination **offset** for the `Query` result.
+    """
+    offset: Long
+
+    """Allows for specifying the **options** for the `Query`."""
+    options: QueryOptionsInput
+
+    """Allows for specifying the **sort** type for the `Query`."""
+    sortBy: [QuerySortInput!]
+
+    """Allows for specifying the **where** predicate for the `Query`."""
+    where: QueryPredicateInput
+  ): QuerySelect
+}
+
+enum QueryFromType {
+  RestaurantLocation
+}
+
+input QueryMissingPredicateValueInput {
+  _: Void
+}
+
+input QueryOptionsCustomInput {
+  key: String!
+  value: String
+}
+
+input QueryOptionsInput {
+  custom: [QueryOptionsCustomInput!]
+  master: Boolean
+  noCache: Boolean
+  noLatentCache: Boolean
+  referenceOnly: Boolean
+  resolveInvisible: Boolean
+  resolveToReferenceOnly: Boolean
+  timeout: Float
+}
+
+input QueryPhrasePredicateValueInput {
+  phrase: String
+  proximity: Int
+  weight: Float
+}
+
+input QueryPredicateInput {
+  """
+  Specifies the values for argument placeholders in the `Query` predicate.
+  """
+  arguments: [[String]]
+
+  """Specifies particular named argument values."""
+  namedValues: [QueryPredicateNamedValueInput]
+
+  """Specifies the predicate for the `Query`."""
+  predicate: String
+}
+
+input QueryPredicateNamedValueInput {
+  name: String!
+  value: QueryPredicateValueInput!
+}
+
+input QueryPredicateValueInput {
+  Missing: QueryMissingPredicateValueInput
+  QueryPhrase: QueryPhrasePredicateValueInput
+  QueryWildcardPhrase: QueryWildcardPhrasePredicateValueInput
+  Region: GeoAreaInput
+}
+
+"""Represents the result of a Dari `Query#select`."""
+type QuerySelect {
+  """The `Record` items in a page of `Query` results."""
+  items: [RecordEntry!]!
+
+  """Metadata about a page of `Query` results."""
+  pageInfo: PageInfo!
+}
+
+input QuerySortByAgeInput {
+  field: String!
+  order: SortByAge!
+  weight: Float!
+}
+
+input QuerySortByDistanceInput {
+  field: String!
+  order: SortByDistance!
+  point: GeoPointInput!
+}
+
+input QuerySortByFieldInput {
+  name: String!
+  order: SortByField!
+}
+
+input QuerySortByRelevanceInput {
+  predicate: QueryPredicateInput!
+  weight: Float!
+}
+
+input QuerySortInput {
+  age: QuerySortByAgeInput
+  distance: QuerySortByDistanceInput
+  field: QuerySortByFieldInput
+  relevance: QuerySortByRelevanceInput
+}
+
+input QueryWildcardPhrasePredicateValueInput {
+  query: String!
 }
 
 interface Record implements Recordable {
@@ -86,6 +483,40 @@ interface RecordEntry implements Record & Recordable {
   The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
   """
   _label: String
+}
+
+"""
+Provides access to various fields and related data for the **Record**, such as state, derivations, previews, views, overlays, and revisions. The availability of certain fields depends on schema configuration and other factors. This type supports querying detailed information, with options for filtering and retrieving specific aspects of the metadata and associated content.
+"""
+type RecordGet {
+  """
+  Allows access to the various fields for the given **Record**, including globals. Note that any configured `GCASchemaSettings#fieldFilter` settings might affect which fields appear here.
+  """
+  State: RecordEntry
+
+  """
+  Gets the current database time. This value can be used as input to save mutations via the lastRead argument as a safeguard against accidentally overwriting data with stale content.
+  """
+  now: Long!
+}
+
+input RecordGetByTypeInput {
+  """Fetch a **Restaurant** instance by a unique identifier."""
+  Restaurant: RestaurantGetInput
+
+  """Fetch a **Restaurant Location** instance by a unique identifier."""
+  RestaurantLocation: RestaurantLocationGetInput
+}
+
+input RecordGetInput {
+  """Fetch a **Record** instance by its unique Record ID."""
+  _id: UUID
+
+  """Fetch a specific **Record** type."""
+  _type: RecordGetByTypeInput
+
+  """Fetch a **Record** instance by its unique URL."""
+  _url: String
 }
 
 type RecordRef implements Recordable {
@@ -140,6 +571,46 @@ type RestaurantGet {
   now: Long!
 }
 
+input RestaurantGetInput {
+  """Fetch a **Restaurant** instance by its unique Record ID."""
+  _id: UUID
+
+  """Fetch a **Restaurant** instance by its unique URL."""
+  _url: String
+
+  """Fetch a **Restaurant** instance by its unique **Key**."""
+  key: String
+}
+
+type RestaurantLocation implements Content & PathsField & Record & RecordEntry & Recordable {
+  """
+  The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
+  """
+  _id: ID
+
+  """
+  The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
+  """
+  _label: String
+  _urls: URLs!
+  accessibilityInfo: String
+  address: String
+  image: StorageItem
+  isMainLocation: Boolean!
+  name: String
+  openHours: String
+  parkingInfo: String
+  phoneNumber: String
+}
+
+input RestaurantLocationGetInput {
+  """Fetch a **Restaurant Location** instance by its unique Record ID."""
+  _id: UUID
+
+  """Fetch a **Restaurant Location** instance by its unique URL."""
+  _url: String
+}
+
 """
 The root `query` type, granting access to all the major GCA read operations.
 """
@@ -148,6 +619,16 @@ type RootQuery {
   Fetch a single record by a unique identifier. This field is present when there is at least 1 read (or write) content type included as an entry type. See `GCASchemaSettings#getReadEntryTypes` and `GCASchemaSettings#getReadWriteEntryTypes` for more information.
   """
   Get: GetEntry
+
+  """
+  Select multiple records at once. This is a bridge to the Dari Query API in Java. This field's inclusion rules are similar to that of `Get` but it can be omitted if either `GCASchemaSettings#isOnlyAllowUniqueIndexLookups` or `GCASchemaSettings#isExcludeQueryFromAllWhenOnlySingletonEntryFields` returns true.
+  """
+  Query: QueryEntry
+}
+
+""""""
+type SepiaFilter {
+  _: Void
 }
 
 interface Singleton implements Record & Recordable {
@@ -189,6 +670,85 @@ input SiteRefInput {
   urls: String
 }
 
+enum SortByAge {
+  NEWEST
+  OLDEST
+}
+
+enum SortByDistance {
+  CLOSEST
+  FARTHEST
+}
+
+enum SortByField {
+  ASCENDING
+  DESCENDING
+}
+
+"""
+An item in a storage system, as represented in the Dari StorageItem Java API.
+"""
+type StorageItem {
+  contentType: String
+  httpHeaders(first: Boolean, name: String): Json!
+  inStorage: Boolean!
+  media: StorageItemMedia
+  metadata(key: String): Json
+  path: String
+  private: Boolean!
+  publicUrl: String
+  securePublicUrl: String
+  storage: String
+}
+
+union StorageItemMedia = StorageItemMedia__Image
+
+""""""
+type StorageItemMedia__Image {
+  """"""
+  byline: String
+
+  """"""
+  caption: String
+
+  """"""
+  copyrightNotice: String
+
+  """"""
+  credit: String
+
+  """"""
+  crop: ImageCrops
+
+  """"""
+  dateTaken: Long
+
+  """"""
+  edits: ImageEdits!
+
+  """"""
+  focus: ImageFocuses!
+
+  """"""
+  height: Int
+
+  """"""
+  keywords: [String!]
+  location: GeoPoint
+
+  """"""
+  orientation: ImageOrientation
+
+  """"""
+  source: String
+
+  """"""
+  title: String
+
+  """"""
+  width: Int
+}
+
 type URLs {
   paths: [URLsPath!]!
   permalink(site: SiteRefInput): String
@@ -209,3 +769,8 @@ enum URLsPathType {
 
 """A universally unique identifier compliant UUID Scalar"""
 scalar UUID
+
+"""
+Reserved as the return type for special fields added to types and/or interfaces that would otherwise have no fields. The GraphQL spec does not support empty types and this field return type is used to circumvent that requirement. Fields of this type are named "_" and are marked as @deprecated to signify that they should be ignored.
+"""
+scalar Void
