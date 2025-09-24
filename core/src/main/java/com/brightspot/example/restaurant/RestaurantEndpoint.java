@@ -6,6 +6,7 @@ import com.psddev.dari.db.Singleton;
 import com.psddev.graphql.GraphQLCorsConfiguration;
 import com.psddev.graphql.gca.GCAEndpoint;
 import com.psddev.graphql.gca.GCASchemaSettings;
+import com.psddev.graphql.gca.schema.types.db.write.save.SaveActionDefinition;
 
 public class RestaurantEndpoint extends GCAEndpoint implements Singleton {
 
@@ -24,6 +25,9 @@ public class RestaurantEndpoint extends GCAEndpoint implements Singleton {
                 MenuCategory.class,
                 MenuItem.class
             )
+
+            .mutableEntryClass(Reservation.class)
+            .contentActionType(SaveActionDefinition.class)
 
             .fieldFilter(field -> field.getParentType() != null)
 
