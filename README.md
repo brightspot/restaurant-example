@@ -2,6 +2,8 @@
 
 This repo showcases a fictional restaurant that's build using React + Typescript on the frontend, and Brightspot + GraphQL on the backend.
 
+<img width="1233" height="1269" alt="casa-mexicana" src="https://github.com/user-attachments/assets/c26abfc9-2063-4ff9-a853-c55d783cc13f" />
+
 ## Prerequisites
 
 * Java 11
