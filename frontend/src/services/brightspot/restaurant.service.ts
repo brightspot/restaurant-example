@@ -9,6 +9,8 @@ import type { Restaurant, Location, MenuCategory, MenuItem } from '../../types'
 import {
   GetLocationsDocument,
   GetLocationsQuery,
+  GetMenuDocument,
+  GetMenuQuery,
   GetRestaurantDocument,
   GetRestaurantQuery
 } from "../../generated/graphql.ts";
@@ -90,10 +92,39 @@ export class BrightspotRestaurantDataService implements RestaurantDataService {
   }
 
   async getMenuCategories(): Promise<ServiceResponse<MenuCategory[]>> {
-    await this.delay()
+    const { data } = await gca.query<GetMenuQuery>({
+      query: GetMenuDocument
+    })
+
+    const categories = data?.Get?.Singleton?.Menu?.State?.categories?.map(category => {
+      if (!category) return null
+
+      const menuCategory: MenuCategory = {
+        id: category._id || '',
+        name: category.name || '',
+        description: category.description || '',
+        menuItems: category.menuItems?.map(item => {
+          if (!item) return null
+
+          return {
+            id: item._id || '',
+            name: item.name || '',
+            description: item.description || '',
+            price: item.price || 0,
+            itemImage: item.image?.publicUrl || '',
+            isSpecial: item.isSpecial || false,
+            isVegetarian: item.isVegetarian || false,
+            isVegan: item.isVegan || false,
+            isGlutenFree: item.isGlutenFree || false,
+            isAvailable: !item.isUnavailable
+          }
+        }).filter(Boolean) as MenuItem[] || []
+      }
+      return menuCategory
+    }).filter(Boolean) as MenuCategory[] || []
 
     return {
-      data: [],
+      data: categories,
       success: true,
       timestamp: new Date()
     }
