@@ -6,6 +6,11 @@
 
 import type { RestaurantDataService, ServiceResponse } from '../types'
 import type { Restaurant, Location, MenuCategory, MenuItem } from '../../types'
+import {
+  GetRestaurantDocument,
+  GetRestaurantQuery
+} from "../../generated/graphql.ts";
+import gca from "./gca.ts";
 
 export class BrightspotRestaurantDataService implements RestaurantDataService {
   private async delay(ms: number = 100): Promise<void> {
@@ -13,7 +18,27 @@ export class BrightspotRestaurantDataService implements RestaurantDataService {
   }
 
   async getRestaurantInfo(): Promise<ServiceResponse<Restaurant>> {
-    await this.delay()
+    const { data } = await gca.query<GetRestaurantQuery>({
+      query: GetRestaurantDocument
+    })
+
+    const content = data?.Get?.Singleton?.Restaurant?.State
+
+    if (content) {
+      const restaurant: Restaurant = {
+        id: content._id || '',
+        name: content.name || '',
+        description: content.description || '',
+        email: content.email || '',
+        website: content.website || ''
+      }
+
+      return {
+        data: restaurant,
+        success: true,
+        timestamp: new Date()
+      }
+    }
 
     return {
       data: { id: 'brightspot-data' } as Restaurant,
