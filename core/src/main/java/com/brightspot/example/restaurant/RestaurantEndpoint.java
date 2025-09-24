@@ -3,6 +3,7 @@ package com.brightspot.example.restaurant;
 import java.util.Set;
 
 import com.psddev.dari.db.Singleton;
+import com.psddev.graphql.GraphQLCorsConfiguration;
 import com.psddev.graphql.gca.GCAEndpoint;
 import com.psddev.graphql.gca.GCASchemaSettings;
 
@@ -21,5 +22,12 @@ public class RestaurantEndpoint extends GCAEndpoint implements Singleton {
             .fieldFilter(field -> field.getParentType() != null)
 
             .build();
+    }
+
+    @Override
+    protected void updateCorsConfiguration(GraphQLCorsConfiguration corsConfiguration) {
+        super.updateCorsConfiguration(corsConfiguration);
+
+        corsConfiguration.addAllowedOrigin("localhost");
     }
 }
