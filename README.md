@@ -45,6 +45,16 @@ Start-Process http://localhost:3000
 
 > **💡️ Note:** It may take a several seconds before the CMS and frontend is available. Just refresh the page until you see the login screen and the restaurant home page. The CMS runs on port 80 at `/cms` and the frontend runs on port 3000 at `/`.
 
+## Running
+
+By default, the frontend application runs in "Mock" service mode at `http://localhost:3000`. To switch to the "Brightspot" service mode, edit your `frontend/.env` file and set the `VITE_SERVICE_TYPE` environment variable to `brightspot`, e.g.
+
+```
+VITE_SERVICE_TYPE=brightspot
+```
+
+For more detailed information on setting up the Brightspot service including the requisite CMS configuration see the [Brightspot service README](frontend/src/services/brightspot/README.md).
+
 ## Logs
 
 To view the Tomcat logs, run:
