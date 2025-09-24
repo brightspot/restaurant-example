@@ -141,6 +141,9 @@ type GetEntry {
 }
 
 type GetSingleton {
+  """Provides access to **Menu** `Singleton` instance data"""
+  Menu: MenuGet
+
   """Provides access to **Restaurant** `Singleton` instance data"""
   Restaurant: RestaurantGet
 }
@@ -278,6 +281,104 @@ scalar Json
 """A 64-bit signed integer"""
 scalar Long
 
+type Menu implements Content & PathsField & Record & RecordEntry & Recordable & Singleton {
+  SingletonMod: SingletonMod!
+
+  """
+  The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
+  """
+  _id: ID
+
+  """
+  The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
+  """
+  _label: String
+  _urls: URLs!
+  categories: [MenuCategory]
+}
+
+type MenuCategory implements Content & PathsField & Record & RecordEntry & Recordable {
+  """
+  The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
+  """
+  _id: ID
+
+  """
+  The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
+  """
+  _label: String
+  _urls: URLs!
+  description: String
+  menuItems: [MenuItem]
+  name: String
+}
+
+input MenuCategoryGetInput {
+  """Fetch a **Menu Category** instance by its unique Record ID."""
+  _id: UUID
+
+  """Fetch a **Menu Category** instance by its unique URL."""
+  _url: String
+}
+
+"""
+Provides access to various fields and related data for the **Menu**, such as state, derivations, previews, views, overlays, and revisions. The availability of certain fields depends on schema configuration and other factors. This type supports querying detailed information, with options for filtering and retrieving specific aspects of the metadata and associated content.
+"""
+type MenuGet {
+  """
+  Allows access to the various fields for the given **Menu**, including globals. Note that any configured `GCASchemaSettings#fieldFilter` settings might affect which fields appear here.
+  """
+  State: Menu
+
+  """
+  Gets the current database time. This value can be used as input to save mutations via the lastRead argument as a safeguard against accidentally overwriting data with stale content.
+  """
+  now: Long!
+}
+
+input MenuGetInput {
+  """Fetch a **Menu** instance by its unique Record ID."""
+  _id: UUID
+
+  """Fetch a **Menu** instance by its unique URL."""
+  _url: String
+
+  """Fetch a **Menu** instance by its unique **Key**."""
+  key: String
+}
+
+type MenuItem implements Content & PathsField & PreviewField & Record & RecordEntry & Recordable {
+  """
+  The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
+  """
+  _id: ID
+
+  """
+  The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
+  """
+  _label: String
+  _preview(height: Int, thumbnail: Boolean, width: Int): StorageItem
+  _urls: URLs!
+  category: MenuCategory
+  description: String
+  image: StorageItem
+  isGlutenFree: Boolean!
+  isSpecial: Boolean!
+  isUnavailable: Boolean!
+  isVegan: Boolean!
+  isVegetarian: Boolean!
+  name: String
+  price: Float
+}
+
+input MenuItemGetInput {
+  """Fetch a **Menu Item** instance by its unique Record ID."""
+  _id: UUID
+
+  """Fetch a **Menu Item** instance by its unique URL."""
+  _url: String
+}
+
 """
 Metadata about a page of query results that can help to inform how to fetch subsequent pages as well as present the data to an end user.
 """
@@ -336,6 +437,11 @@ interface PathsField {
   _urls: URLs!
 }
 
+""""""
+interface PreviewField {
+  _preview(height: Int, thumbnail: Boolean, width: Int): StorageItem
+}
+
 type QueryEntry {
   """Provides fields for accessing the Dari `Query` API."""
   Records(
@@ -365,6 +471,8 @@ type QueryEntry {
 }
 
 enum QueryFromType {
+  MenuCategory
+  MenuItem
   RestaurantLocation
 }
 
@@ -501,6 +609,15 @@ type RecordGet {
 }
 
 input RecordGetByTypeInput {
+  """Fetch a **Menu** instance by a unique identifier."""
+  Menu: MenuGetInput
+
+  """Fetch a **Menu Category** instance by a unique identifier."""
+  MenuCategory: MenuCategoryGetInput
+
+  """Fetch a **Menu Item** instance by a unique identifier."""
+  MenuItem: MenuItemGetInput
+
   """Fetch a **Restaurant** instance by a unique identifier."""
   Restaurant: RestaurantGetInput
 

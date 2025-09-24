@@ -117,6 +117,8 @@ export type GetEntryRecordArgs = {
 
 export type GetSingleton = {
   __typename: 'GetSingleton';
+  /** Provides access to **Menu** `Singleton` instance data */
+  Menu?: Maybe<MenuGet>;
   /** Provides access to **Restaurant** `Singleton` instance data */
   Restaurant?: Maybe<RestaurantGet>;
 };
@@ -215,6 +217,88 @@ export type InvertFilter = {
   _?: Maybe<Scalars['Void']['output']>;
 };
 
+export type Menu = Content & PathsField & Record & RecordEntry & Recordable & Singleton & {
+  __typename: 'Menu';
+  SingletonMod: SingletonMod;
+  /** The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`. */
+  _id?: Maybe<Scalars['ID']['output']>;
+  /** The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`. */
+  _label?: Maybe<Scalars['String']['output']>;
+  _urls: UrLs;
+  categories?: Maybe<Array<Maybe<MenuCategory>>>;
+};
+
+export type MenuCategory = Content & PathsField & Record & RecordEntry & Recordable & {
+  __typename: 'MenuCategory';
+  /** The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`. */
+  _id?: Maybe<Scalars['ID']['output']>;
+  /** The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`. */
+  _label?: Maybe<Scalars['String']['output']>;
+  _urls: UrLs;
+  description?: Maybe<Scalars['String']['output']>;
+  menuItems?: Maybe<Array<Maybe<MenuItem>>>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type MenuCategoryGetInput = {
+  /** Fetch a **Menu Category** instance by its unique Record ID. */
+  _id?: InputMaybe<Scalars['UUID']['input']>;
+  /** Fetch a **Menu Category** instance by its unique URL. */
+  _url?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** Provides access to various fields and related data for the **Menu**, such as state, derivations, previews, views, overlays, and revisions. The availability of certain fields depends on schema configuration and other factors. This type supports querying detailed information, with options for filtering and retrieving specific aspects of the metadata and associated content. */
+export type MenuGet = {
+  __typename: 'MenuGet';
+  /** Allows access to the various fields for the given **Menu**, including globals. Note that any configured `GCASchemaSettings#fieldFilter` settings might affect which fields appear here. */
+  State?: Maybe<Menu>;
+  /** Gets the current database time. This value can be used as input to save mutations via the lastRead argument as a safeguard against accidentally overwriting data with stale content. */
+  now: Scalars['Long']['output'];
+};
+
+export type MenuGetInput = {
+  /** Fetch a **Menu** instance by its unique Record ID. */
+  _id?: InputMaybe<Scalars['UUID']['input']>;
+  /** Fetch a **Menu** instance by its unique URL. */
+  _url?: InputMaybe<Scalars['String']['input']>;
+  /** Fetch a **Menu** instance by its unique **Key**. */
+  key?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type MenuItem = Content & PathsField & PreviewField & Record & RecordEntry & Recordable & {
+  __typename: 'MenuItem';
+  /** The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`. */
+  _id?: Maybe<Scalars['ID']['output']>;
+  /** The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`. */
+  _label?: Maybe<Scalars['String']['output']>;
+  _preview?: Maybe<StorageItem>;
+  _urls: UrLs;
+  category?: Maybe<MenuCategory>;
+  description?: Maybe<Scalars['String']['output']>;
+  image?: Maybe<StorageItem>;
+  isGlutenFree: Scalars['Boolean']['output'];
+  isSpecial: Scalars['Boolean']['output'];
+  isUnavailable: Scalars['Boolean']['output'];
+  isVegan: Scalars['Boolean']['output'];
+  isVegetarian: Scalars['Boolean']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  price?: Maybe<Scalars['Float']['output']>;
+};
+
+
+export type MenuItem_PreviewArgs = {
+  height?: InputMaybe<Scalars['Int']['input']>;
+  thumbnail?: InputMaybe<Scalars['Boolean']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type MenuItemGetInput = {
+  /** Fetch a **Menu Item** instance by its unique Record ID. */
+  _id?: InputMaybe<Scalars['UUID']['input']>;
+  /** Fetch a **Menu Item** instance by its unique URL. */
+  _url?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Metadata about a page of query results that can help to inform how to fetch subsequent pages as well as present the data to an end user. */
 export type PageInfo = {
   __typename: 'PageInfo';
@@ -254,6 +338,17 @@ export type PathsField = {
   _urls: UrLs;
 };
 
+export type PreviewField = {
+  _preview?: Maybe<StorageItem>;
+};
+
+
+export type PreviewField_PreviewArgs = {
+  height?: InputMaybe<Scalars['Int']['input']>;
+  thumbnail?: InputMaybe<Scalars['Boolean']['input']>;
+  width?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type QueryEntry = {
   __typename: 'QueryEntry';
   /** Provides fields for accessing the Dari `Query` API. */
@@ -272,6 +367,8 @@ export type QueryEntryRecordsArgs = {
 };
 
 export enum QueryFromType {
+  MenuCategory = 'MenuCategory',
+  MenuItem = 'MenuItem',
   RestaurantLocation = 'RestaurantLocation'
 }
 
@@ -388,6 +485,12 @@ export type RecordGet = {
 };
 
 export type RecordGetByTypeInput = {
+  /** Fetch a **Menu** instance by a unique identifier. */
+  Menu?: InputMaybe<MenuGetInput>;
+  /** Fetch a **Menu Category** instance by a unique identifier. */
+  MenuCategory?: InputMaybe<MenuCategoryGetInput>;
+  /** Fetch a **Menu Item** instance by a unique identifier. */
+  MenuItem?: InputMaybe<MenuItemGetInput>;
   /** Fetch a **Restaurant** instance by a unique identifier. */
   Restaurant?: InputMaybe<RestaurantGetInput>;
   /** Fetch a **Restaurant Location** instance by a unique identifier. */
@@ -619,6 +722,18 @@ export type GetLocationsQuery = (
     & { Records?: Maybe<(
       { __typename: 'QuerySelect' }
       & { items: Array<
+        | (
+          { __typename: 'Menu' }
+          & Pick<Menu, '_id'>
+        )
+        | (
+          { __typename: 'MenuCategory' }
+          & Pick<MenuCategory, '_id'>
+        )
+        | (
+          { __typename: 'MenuItem' }
+          & Pick<MenuItem, '_id'>
+        )
         | (
           { __typename: 'Restaurant' }
           & Pick<Restaurant, '_id'>
