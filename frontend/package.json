@@ -8,7 +8,10 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "codegen": "graphql-codegen --require dotenv/config"
+    "codegen": "graphql-codegen --require dotenv/config",
+    "schema:backup": "node -e \"try{require('fs').copyFileSync('schema.graphql','schema.previous.graphql')}catch{}\"",
+    "schema:diff": "graphql-inspector diff schema.previous.graphql schema.graphql",
+    "codegen:diff": "yarn schema:backup && yarn codegen && yarn schema:diff"
   },
   "dependencies": {
     "antd": "^5.8.6",
