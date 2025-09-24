@@ -73,3 +73,7 @@ To shut down the web services, run:
 ```shell
 docker compose stop
 ```
+
+## Practice
+
+If you would like test your metal and try building the integration yourself, checkout the [feature/baseline](https://github.com/brightspot/restaurant-example/tree/feature/baseline) branch which contains only the barebones Brightspot project scaffolding and the fully baked frontend running in mock mode.
