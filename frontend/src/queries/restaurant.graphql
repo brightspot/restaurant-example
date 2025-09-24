@@ -1,0 +1,16 @@
+query GetRestaurant {
+  Get {
+    Singleton {
+      Restaurant {
+        State {
+          __typename
+          _id
+          name
+          description
+          email
+          website
+        }
+      }
+    }
+  }
+}
