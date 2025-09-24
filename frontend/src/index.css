@@ -1,0 +1,123 @@
+:root {
+  /* Font Family */
+  --font-family-primary: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  /* Colors */
+  --color-primary: #1890ff;
+  --color-primary-text: #2c3e50;
+  --color-secondary-text: #34495e;
+  --color-text-muted: #666;
+  --color-text-light: rgba(255, 255, 255, 0.87);
+  --color-success: #52c41a;
+  --color-warning: #faad14;
+  --color-error: #ff4d4f;
+  --color-info: #fa8c16;
+  --color-background-light: #f0f0f0;
+  --color-background-dark: #242424;
+  --color-white: #ffffff;
+
+  /* Background Overlays */
+  --color-overlay-light: rgba(255, 255, 255, 0.95);
+  --color-overlay-dark: rgba(0, 0, 0, 0.8);
+  --color-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Typography Scale (Responsive) */
+  --font-size-hero: clamp(2rem, 5vw, 3rem);
+  --font-size-h1: clamp(2rem, 4vw, 2.5rem);
+  --font-size-h2: clamp(1.5rem, 3vw, 2rem);
+  --font-size-h3: clamp(1.2rem, 2.5vw, 1.5rem);
+  --font-size-h4: clamp(1rem, 2.5vw, 1.25rem);
+  --font-size-large: clamp(16px, 2.5vw, 20px);
+  --font-size-price: clamp(16px, 2.5vw, 18px);
+  --font-size-base: clamp(14px, 2vw, 16px);
+  --font-size-small: 12px;
+  --font-size-icon-large: clamp(36px, 5vw, 48px);
+
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.5;
+  --line-height-loose: 1.6;
+
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: bold;
+
+  /* Spacing */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Border Radius */
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+
+  /* Box Shadows */
+  --shadow-sm: 0 2px 8px var(--color-shadow);
+  --shadow-md: 0 4px 12px var(--color-shadow);
+  --shadow-lg: 0 6px 16px var(--color-shadow);
+  --shadow-xl: 0 8px 24px var(--color-shadow);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Z-Index Scale */
+  --z-index-base: 1;
+  --z-index-overlay: 10;
+  --z-index-modal: 100;
+  --z-index-tooltip: 1000;
+
+  /* Legacy properties */
+  font-family: var(--font-family-primary);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-normal);
+
+  color-scheme: light dark;
+  color: var(--color-text-light);
+  background-color: var(--color-background-dark);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegidity;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  text-align: center;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-primary-text: #213547;
+    --color-background-dark: var(--color-white);
+    color: var(--color-primary-text);
+    background-color: var(--color-background-dark);
+  }
+  a:hover {
+    color: #747bff;
+  }
+}
