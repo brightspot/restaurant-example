@@ -1,5 +1,6 @@
 schema {
   query: RootQuery
+  mutation: RootMutation
 }
 
 """
@@ -44,6 +45,10 @@ enum AngularUnit {
   RADIANS
 }
 
+input ClearUrlsInput {
+  _: Void
+}
+
 """"""
 type CompositeImageFilter {
   filters: [CompositeImageFilterType!]!
@@ -62,6 +67,21 @@ interface Content implements Record & Recordable {
   The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
   """
   _label: String
+}
+
+input ContentActionContextInput {
+  dryRun: Boolean
+  lastRead: Long
+  site: SiteRefInput
+}
+
+type ContentActionTypes {
+  Save: SaveAction
+}
+
+type ContentActions {
+  Action: ContentActionTypes
+  Transaction(context: ContentActionContextInput = {}, writes: [TransactionInput!]!): TransactionResult
 }
 
 input FromAllInput {
@@ -83,6 +103,10 @@ input FromInput {
 
   """Corresponds to the Java method `Query#fromType`."""
   typeId: UUID
+}
+
+input GenerateUrlsInput {
+  _: Void
 }
 
 """tk tk tk"""
@@ -270,6 +294,11 @@ enum ImageOrientation {
   EXIF_8_LEFT_BOTTOM
 }
 
+"""
+An instant in time represented as the number of milliseconds since the epoch.
+"""
+scalar Instant
+
 """"""
 type InvertFilter {
   _: Void
@@ -277,6 +306,10 @@ type InvertFilter {
 
 """A JSON scalar"""
 scalar Json
+
+scalar LocalDate
+
+scalar LocalTime
 
 """A 64-bit signed integer"""
 scalar Long
@@ -473,6 +506,7 @@ type QueryEntry {
 enum QueryFromType {
   MenuCategory
   MenuItem
+  Reservation
   RestaurantLocation
 }
 
@@ -618,6 +652,9 @@ input RecordGetByTypeInput {
   """Fetch a **Menu Item** instance by a unique identifier."""
   MenuItem: MenuItemGetInput
 
+  """Fetch a **Reservation** instance by a unique identifier."""
+  Reservation: ReservationGetInput
+
   """Fetch a **Restaurant** instance by a unique identifier."""
   Restaurant: RestaurantGetInput
 
@@ -636,12 +673,48 @@ input RecordGetInput {
   _url: String
 }
 
+"""`@oneOf` input type for saving a **Record** instance."""
+input RecordMainDiffInput {
+  """Input type for saving a **Reservation** instance"""
+  ReservationDiff: ReservationInput
+}
+
+interface RecordMutationEntry implements Record & Recordable {
+  """
+  The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
+  """
+  _id: ID
+
+  """
+  The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
+  """
+  _label: String
+}
+
+input RecordMutationGetInput {
+  """Fetch a **Record** instance by its unique Record ID."""
+  _id: UUID
+  _ref: ID
+
+  """Fetch a specific **Record** type."""
+  _type: RecordGetByTypeInput
+
+  """Fetch a **Record** instance by its unique URL."""
+  _url: String
+}
+
 type RecordRef implements Recordable {
   """
   The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
   """
   _id: ID
   _type: ID
+}
+
+input RecordSaveActionInput {
+  main: RecordMainDiffInput
+  urls: [URLsInput]
+  with: RecordMutationGetInput
 }
 
 """
@@ -652,6 +725,90 @@ interface Recordable {
   The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
   """
   _id: ID
+}
+
+type Reservation implements Content & PathsField & Record & RecordEntry & RecordMutationEntry & Recordable {
+  """
+  The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`.
+  """
+  _id: ID
+
+  """
+  The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`.
+  """
+  _label: String
+  _urls: URLs!
+  confirmationNumber: String
+  createdDate: Instant
+  customerEmail: String
+  customerName: String
+  customerPhone: String
+  location: RestaurantLocation
+  partySize: Int
+  reservationDate: LocalDate
+  reservationTime: LocalTime
+  specialRequests: String
+  status: ReservationStatus
+}
+
+input ReservationGetInput {
+  """Fetch a **Reservation** instance by its unique Record ID."""
+  _id: UUID
+
+  """Fetch a **Reservation** instance by its unique URL."""
+  _url: String
+}
+
+"""An input type for writing a **Reservation** instance."""
+input ReservationInput {
+  """The unique ID for an existing embedded `Record`."""
+  _id: UUID
+
+  """
+  A name for a new `Record` that can be used as a reference when the unique system-assigned ID is not yet available.
+  """
+  _name: ID
+
+  """"""
+  confirmationNumber: String
+
+  """"""
+  createdDate: Instant
+
+  """"""
+  customerEmail: String
+
+  """"""
+  customerName: String
+
+  """"""
+  customerPhone: String
+
+  """"""
+  location: RestaurantLocationDiffRefInput
+
+  """"""
+  partySize: Int
+
+  """"""
+  reservationDate: LocalDate
+
+  """"""
+  reservationTime: LocalTime
+
+  """"""
+  specialRequests: String
+
+  """"""
+  status: ReservationStatus
+}
+
+enum ReservationStatus {
+  CANCELLED
+  COMPLETED
+  CONFIRMED
+  NO_SHOW
+  PENDING
 }
 
 type Restaurant implements Content & PathsField & Record & RecordEntry & Recordable & Singleton {
@@ -720,12 +877,25 @@ type RestaurantLocation implements Content & PathsField & Record & RecordEntry &
   phoneNumber: String
 }
 
+input RestaurantLocationDiffRefInput {
+  """Fetch a **Restaurant Location** instance by its unique Record ID."""
+  _id: UUID
+  _ref: ID
+
+  """Fetch a **Restaurant Location** instance by its unique URL."""
+  _url: String
+}
+
 input RestaurantLocationGetInput {
   """Fetch a **Restaurant Location** instance by its unique Record ID."""
   _id: UUID
 
   """Fetch a **Restaurant Location** instance by its unique URL."""
   _url: String
+}
+
+type RootMutation {
+  Content: ContentActions
 }
 
 """
@@ -741,6 +911,24 @@ type RootQuery {
   Select multiple records at once. This is a bridge to the Dari Query API in Java. This field's inclusion rules are similar to that of `Get` but it can be omitted if either `GCASchemaSettings#isOnlyAllowUniqueIndexLookups` or `GCASchemaSettings#isExcludeQueryFromAllWhenOnlySingletonEntryFields` returns true.
   """
   Query: QueryEntry
+}
+
+type SaveAction {
+  Record(args: RecordSaveActionInput!, context: ContentActionContextInput = {}): SaveActionResult
+}
+
+type SaveActionResult {
+  saveInfo: SaveActionResultInfo
+  state: RecordMutationEntry
+}
+
+type SaveActionResultInfo {
+  appliedDiffs: Json
+  submittedDiffs: Json
+}
+
+input SaveActionTransactionInput {
+  Record: RecordSaveActionInput
 }
 
 """"""
@@ -866,15 +1054,38 @@ type StorageItemMedia__Image {
   width: Int
 }
 
+union TransactionContentActionResult = SaveActionResult
+
+input TransactionInput {
+  Save: SaveActionTransactionInput
+}
+
+type TransactionResult {
+  results: [TransactionContentActionResult!]!
+  status: String
+}
+
 type URLs {
   paths: [URLsPath!]!
   permalink(site: SiteRefInput): String
+}
+
+input URLsInput {
+  add: URLsPathInput
+  clear: ClearUrlsInput
+  generate: GenerateUrlsInput
+  remove: String
 }
 
 type URLsPath {
   path: String
   site: RecordRef
   type: URLsPathType
+}
+
+input URLsPathInput {
+  path: String!
+  type: URLsPathType!
 }
 
 enum URLsPathType {

@@ -13,7 +13,10 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Instant: { input: any; output: any; }
   Json: { input: any; output: any; }
+  LocalDate: { input: any; output: any; }
+  LocalTime: { input: any; output: any; }
   Long: { input: any; output: any; }
   UUID: { input: any; output: any; }
   Void: { input: any; output: any; }
@@ -28,6 +31,10 @@ export enum AngularUnit {
   Radians = 'RADIANS'
 }
 
+export type ClearUrlsInput = {
+  _?: InputMaybe<Scalars['Void']['input']>;
+};
+
 export type CompositeImageFilter = {
   __typename: 'CompositeImageFilter';
   filters: Array<CompositeImageFilterType>;
@@ -41,6 +48,29 @@ export type Content = {
   _id?: Maybe<Scalars['ID']['output']>;
   /** The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`. */
   _label?: Maybe<Scalars['String']['output']>;
+};
+
+export type ContentActionContextInput = {
+  dryRun?: InputMaybe<Scalars['Boolean']['input']>;
+  lastRead?: InputMaybe<Scalars['Long']['input']>;
+  site?: InputMaybe<SiteRefInput>;
+};
+
+export type ContentActionTypes = {
+  __typename: 'ContentActionTypes';
+  Save?: Maybe<SaveAction>;
+};
+
+export type ContentActions = {
+  __typename: 'ContentActions';
+  Action?: Maybe<ContentActionTypes>;
+  Transaction?: Maybe<TransactionResult>;
+};
+
+
+export type ContentActionsTransactionArgs = {
+  context?: InputMaybe<ContentActionContextInput>;
+  writes: Array<TransactionInput>;
 };
 
 export type FromAllInput = {
@@ -58,6 +88,10 @@ export type FromInput = {
   type?: InputMaybe<QueryFromType>;
   /** Corresponds to the Java method `Query#fromType`. */
   typeId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type GenerateUrlsInput = {
+  _?: InputMaybe<Scalars['Void']['input']>;
 };
 
 /** tk tk tk */
@@ -369,6 +403,7 @@ export type QueryEntryRecordsArgs = {
 export enum QueryFromType {
   MenuCategory = 'MenuCategory',
   MenuItem = 'MenuItem',
+  Reservation = 'Reservation',
   RestaurantLocation = 'RestaurantLocation'
 }
 
@@ -491,6 +526,8 @@ export type RecordGetByTypeInput = {
   MenuCategory?: InputMaybe<MenuCategoryGetInput>;
   /** Fetch a **Menu Item** instance by a unique identifier. */
   MenuItem?: InputMaybe<MenuItemGetInput>;
+  /** Fetch a **Reservation** instance by a unique identifier. */
+  Reservation?: InputMaybe<ReservationGetInput>;
   /** Fetch a **Restaurant** instance by a unique identifier. */
   Restaurant?: InputMaybe<RestaurantGetInput>;
   /** Fetch a **Restaurant Location** instance by a unique identifier. */
@@ -506,6 +543,29 @@ export type RecordGetInput = {
   _url?: InputMaybe<Scalars['String']['input']>;
 };
 
+/** `@oneOf` input type for saving a **Record** instance. */
+export type RecordMainDiffInput = {
+  /** Input type for saving a **Reservation** instance */
+  ReservationDiff?: InputMaybe<ReservationInput>;
+};
+
+export type RecordMutationEntry = {
+  /** The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`. */
+  _id?: Maybe<Scalars['ID']['output']>;
+  /** The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`. */
+  _label?: Maybe<Scalars['String']['output']>;
+};
+
+export type RecordMutationGetInput = {
+  /** Fetch a **Record** instance by its unique Record ID. */
+  _id?: InputMaybe<Scalars['UUID']['input']>;
+  _ref?: InputMaybe<Scalars['ID']['input']>;
+  /** Fetch a specific **Record** type. */
+  _type?: InputMaybe<RecordGetByTypeInput>;
+  /** Fetch a **Record** instance by its unique URL. */
+  _url?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type RecordRef = Recordable & {
   __typename: 'RecordRef';
   /** The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`. */
@@ -513,11 +573,71 @@ export type RecordRef = Recordable & {
   _type?: Maybe<Scalars['ID']['output']>;
 };
 
+export type RecordSaveActionInput = {
+  main?: InputMaybe<RecordMainDiffInput>;
+  urls?: InputMaybe<Array<InputMaybe<UrLsInput>>>;
+  with?: InputMaybe<RecordMutationGetInput>;
+};
+
 /** The super interface for all types backed by data models, e.g. Java  classes that implement `Recordable`. This interface declares a single `_id` field containing the UUID of the record. A corresponding `_type` field is intentionally omitted as it can be derived programmatically from the built-in GraphQL `__typename` field. Each GraphQL `type` that implements this interface will be annotated  with the `@gca_object_type` directive which contains the backing data model's type ID. */
 export type Recordable = {
   /** The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`. */
   _id?: Maybe<Scalars['ID']['output']>;
 };
+
+export type Reservation = Content & PathsField & Record & RecordEntry & RecordMutationEntry & Recordable & {
+  __typename: 'Reservation';
+  /** The unique ID of the `Record`. Corresponds to the Java method `Record#getId` and `State#getId`. */
+  _id?: Maybe<Scalars['ID']['output']>;
+  /** The display name of the `Record` instance. Corresponds to the Java methods `Record#getLabel` and `State#getLabel`. */
+  _label?: Maybe<Scalars['String']['output']>;
+  _urls: UrLs;
+  confirmationNumber?: Maybe<Scalars['String']['output']>;
+  createdDate?: Maybe<Scalars['Instant']['output']>;
+  customerEmail?: Maybe<Scalars['String']['output']>;
+  customerName?: Maybe<Scalars['String']['output']>;
+  customerPhone?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<RestaurantLocation>;
+  partySize?: Maybe<Scalars['Int']['output']>;
+  reservationDate?: Maybe<Scalars['LocalDate']['output']>;
+  reservationTime?: Maybe<Scalars['LocalTime']['output']>;
+  specialRequests?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<ReservationStatus>;
+};
+
+export type ReservationGetInput = {
+  /** Fetch a **Reservation** instance by its unique Record ID. */
+  _id?: InputMaybe<Scalars['UUID']['input']>;
+  /** Fetch a **Reservation** instance by its unique URL. */
+  _url?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** An input type for writing a **Reservation** instance. */
+export type ReservationInput = {
+  /** The unique ID for an existing embedded `Record`. */
+  _id?: InputMaybe<Scalars['UUID']['input']>;
+  /** A name for a new `Record` that can be used as a reference when the unique system-assigned ID is not yet available. */
+  _name?: InputMaybe<Scalars['ID']['input']>;
+  confirmationNumber?: InputMaybe<Scalars['String']['input']>;
+  createdDate?: InputMaybe<Scalars['Instant']['input']>;
+  customerEmail?: InputMaybe<Scalars['String']['input']>;
+  customerName?: InputMaybe<Scalars['String']['input']>;
+  customerPhone?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<RestaurantLocationDiffRefInput>;
+  partySize?: InputMaybe<Scalars['Int']['input']>;
+  reservationDate?: InputMaybe<Scalars['LocalDate']['input']>;
+  reservationTime?: InputMaybe<Scalars['LocalTime']['input']>;
+  specialRequests?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<ReservationStatus>;
+};
+
+export enum ReservationStatus {
+  Cancelled = 'CANCELLED',
+  Completed = 'COMPLETED',
+  Confirmed = 'CONFIRMED',
+  NoShow = 'NO_SHOW',
+  Pending = 'PENDING'
+}
 
 export type Restaurant = Content & PathsField & Record & RecordEntry & Recordable & Singleton & {
   __typename: 'Restaurant';
@@ -568,11 +688,24 @@ export type RestaurantLocation = Content & PathsField & Record & RecordEntry & R
   phoneNumber?: Maybe<Scalars['String']['output']>;
 };
 
+export type RestaurantLocationDiffRefInput = {
+  /** Fetch a **Restaurant Location** instance by its unique Record ID. */
+  _id?: InputMaybe<Scalars['UUID']['input']>;
+  _ref?: InputMaybe<Scalars['ID']['input']>;
+  /** Fetch a **Restaurant Location** instance by its unique URL. */
+  _url?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type RestaurantLocationGetInput = {
   /** Fetch a **Restaurant Location** instance by its unique Record ID. */
   _id?: InputMaybe<Scalars['UUID']['input']>;
   /** Fetch a **Restaurant Location** instance by its unique URL. */
   _url?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type RootMutation = {
+  __typename: 'RootMutation';
+  Content?: Maybe<ContentActions>;
 };
 
 /** The root `query` type, granting access to all the major GCA read operations. */
@@ -582,6 +715,33 @@ export type RootQuery = {
   Get?: Maybe<GetEntry>;
   /** Select multiple records at once. This is a bridge to the Dari Query API in Java. This field's inclusion rules are similar to that of `Get` but it can be omitted if either `GCASchemaSettings#isOnlyAllowUniqueIndexLookups` or `GCASchemaSettings#isExcludeQueryFromAllWhenOnlySingletonEntryFields` returns true. */
   Query?: Maybe<QueryEntry>;
+};
+
+export type SaveAction = {
+  __typename: 'SaveAction';
+  Record?: Maybe<SaveActionResult>;
+};
+
+
+export type SaveActionRecordArgs = {
+  args: RecordSaveActionInput;
+  context?: InputMaybe<ContentActionContextInput>;
+};
+
+export type SaveActionResult = {
+  __typename: 'SaveActionResult';
+  saveInfo?: Maybe<SaveActionResultInfo>;
+  state?: Maybe<RecordMutationEntry>;
+};
+
+export type SaveActionResultInfo = {
+  __typename: 'SaveActionResultInfo';
+  appliedDiffs?: Maybe<Scalars['Json']['output']>;
+  submittedDiffs?: Maybe<Scalars['Json']['output']>;
+};
+
+export type SaveActionTransactionInput = {
+  Record?: InputMaybe<RecordSaveActionInput>;
 };
 
 export type SepiaFilter = {
@@ -682,6 +842,18 @@ export type StorageItemMedia__Image = {
   width?: Maybe<Scalars['Int']['output']>;
 };
 
+export type TransactionContentActionResult = SaveActionResult;
+
+export type TransactionInput = {
+  Save?: InputMaybe<SaveActionTransactionInput>;
+};
+
+export type TransactionResult = {
+  __typename: 'TransactionResult';
+  results: Array<TransactionContentActionResult>;
+  status?: Maybe<Scalars['String']['output']>;
+};
+
 export type UrLs = {
   __typename: 'URLs';
   paths: Array<UrLsPath>;
@@ -693,11 +865,23 @@ export type UrLsPermalinkArgs = {
   site?: InputMaybe<SiteRefInput>;
 };
 
+export type UrLsInput = {
+  add?: InputMaybe<UrLsPathInput>;
+  clear?: InputMaybe<ClearUrlsInput>;
+  generate?: InputMaybe<GenerateUrlsInput>;
+  remove?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type UrLsPath = {
   __typename: 'URLsPath';
   path?: Maybe<Scalars['String']['output']>;
   site?: Maybe<RecordRef>;
   type?: Maybe<UrLsPathType>;
+};
+
+export type UrLsPathInput = {
+  path: Scalars['String']['input'];
+  type: UrLsPathType;
 };
 
 export enum UrLsPathType {
@@ -733,6 +917,10 @@ export type GetLocationsQuery = (
         | (
           { __typename: 'MenuItem' }
           & Pick<MenuItem, '_id'>
+        )
+        | (
+          { __typename: 'Reservation' }
+          & Pick<Reservation, '_id'>
         )
         | (
           { __typename: 'Restaurant' }
@@ -869,6 +1057,10 @@ export type SearchMenuQuery = (
             { __typename: 'StorageItem' }
             & Pick<StorageItem, 'publicUrl'>
           )> }
+        )
+        | (
+          { __typename: 'Reservation' }
+          & Pick<Reservation, '_id'>
         )
         | (
           { __typename: 'Restaurant' }
