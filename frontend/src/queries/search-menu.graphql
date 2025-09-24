@@ -1,0 +1,26 @@
+query SearchMenu($query: [[String]]) {
+  Query {
+    Records(
+      from: {type: MenuItem}
+      where: {predicate: "* matches ?", arguments: $query}
+    ) {
+      items {
+        _id
+        __typename
+        ... on MenuItem {
+          name
+          description
+          price
+          isSpecial
+          isVegetarian
+          isVegan
+          isGlutenFree
+          isUnavailable
+          image {
+            publicUrl
+          }
+        }
+      }
+    }
+  }
+}
