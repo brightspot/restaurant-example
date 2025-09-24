@@ -1,0 +1,43 @@
+version: '3.0'
+services:
+
+  mysql:
+    image: brightspot/mysql:mysql5.6
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  solr:
+    image: brightspot/solr:8
+    ports:
+      - '8080:8080'
+    volumes:
+      - solr-data:/var/solr/data/collection1/data
+
+  tomcat:
+    image: brightspot/tomcat:9.0-jdk11
+    ports:
+      - '5005:5005'
+    volumes:
+      - storage:/servers/tomcat/storage
+      - .:${PROJECT_DIRECTORY}:cached
+    environment:
+      - BRIGHTSPOT_PROJECT_DIRECTORY=/code
+      - CONTEXT_PROPERTIES=${PROJECT_DIRECTORY}/docker-context.properties
+      - MYSQL_DATABASE=brightspot
+      - ROOT_WAR=${PROJECT_DIRECTORY}/web/build/libs/web.war
+      - SOLR_URL=http://solr:8080/solr/collection1
+
+  apache:
+    image: brightspot/apache:2-dims3
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - storage:/var/www/localhost/htdocs/storage
+
+volumes:
+  mysql-data:
+  solr-data:
+  storage:

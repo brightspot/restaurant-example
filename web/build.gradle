@@ -1,0 +1,9 @@
+plugins {
+    id 'com.brightspot.war'
+}
+
+dependencies {
+    implementation project(':core')
+
+    compileOnly 'com.psddev:cms-tool-ui'
+}
