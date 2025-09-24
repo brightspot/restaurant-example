@@ -12,7 +12,9 @@ import {
   GetMenuDocument,
   GetMenuQuery,
   GetRestaurantDocument,
-  GetRestaurantQuery
+  GetRestaurantQuery,
+  SearchMenuDocument,
+  SearchMenuQuery
 } from "../../generated/graphql.ts";
 import gca from "./gca.ts";
 
@@ -141,10 +143,34 @@ export class BrightspotRestaurantDataService implements RestaurantDataService {
   }
 
   async searchMenuItems(_query: string): Promise<ServiceResponse<MenuItem[]>> {
-    await this.delay()
+    const { data } = await gca.query<SearchMenuQuery>({
+      query: SearchMenuDocument,
+      variables: {
+        query: [[_query]]
+      }
+    })
+
+    const menuItems = data?.Query?.Records?.items?.map(item => {
+      if (item?.__typename === 'MenuItem') {
+        const menuItem: MenuItem = {
+          id: item._id || '',
+          name: item.name || '',
+          description: item.description || '',
+          price: item.price || 0,
+          itemImage: item.image?.publicUrl || '',
+          isSpecial: item.isSpecial || false,
+          isVegetarian: item.isVegetarian || false,
+          isVegan: item.isVegan || false,
+          isGlutenFree: item.isGlutenFree || false,
+          isAvailable: !item.isUnavailable
+        }
+        return menuItem
+      }
+      return null
+    }).filter(Boolean) as MenuItem[] || []
 
     return {
-      data: [],
+      data: menuItems,
       success: true,
       timestamp: new Date()
     }
