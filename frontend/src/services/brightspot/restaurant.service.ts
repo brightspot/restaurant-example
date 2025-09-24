@@ -7,6 +7,8 @@
 import type { RestaurantDataService, ServiceResponse } from '../types'
 import type { Restaurant, Location, MenuCategory, MenuItem } from '../../types'
 import {
+  GetLocationsDocument,
+  GetLocationsQuery,
   GetRestaurantDocument,
   GetRestaurantQuery
 } from "../../generated/graphql.ts";
@@ -48,10 +50,30 @@ export class BrightspotRestaurantDataService implements RestaurantDataService {
   }
 
   async getLocations(): Promise<ServiceResponse<Location[]>> {
-    await this.delay()
+    const { data } = await gca.query<GetLocationsQuery>({
+      query: GetLocationsDocument
+    })
+
+    const locations = data?.Query?.Records?.items?.map(item => {
+      if (item?.__typename === 'RestaurantLocation') {
+        const location: Location = {
+          id: item._id || '',
+          name: item.name || '',
+          address: item.address || '',
+          phone: item.phoneNumber || '',
+          hours: item.openHours || '',
+          parkingInfo: item.parkingInfo || '',
+          accessibilityInfo: item.accessibilityInfo || '',
+          isMainLocation: item.isMainLocation || false,
+          locationImage: item.image?.publicUrl || ''
+        }
+        return location
+      }
+      return null
+    }).filter(Boolean) as Location[] || []
 
     return {
-      data: [],
+      data: locations,
       success: true,
       timestamp: new Date()
     }
