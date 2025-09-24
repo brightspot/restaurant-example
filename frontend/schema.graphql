@@ -1,0 +1,30 @@
+schema {
+  query: RootQuery
+}
+
+"""
+When a field's value is null, specifies whether the field's placeholder should be returned instead. This applies to the current field and all its sub-fields, unless it's redefined with a new value further down the field hierarchy.
+"""
+directive @gca_placeholder(if: Boolean) on FIELD
+
+"""
+Specifies if the field's raw State value is preferred over the calculated value of the backing getter method. This applies to the current field and all its sub-fields, unless it's redefined with a new value further down the field hierarchy.
+"""
+directive @gca_raw(if: Boolean) on FIELD
+
+"""
+Specifies if the raw SDL should be included in the response extensions. Introspection queries must be allowed in order for it to take effect.
+"""
+directive @sdl(if: Boolean) on QUERY
+
+"""
+The root `query` type, granting access to all the major GCA read operations.
+"""
+type RootQuery {
+  _: Void
+}
+
+"""
+Reserved as the return type for special fields added to types and/or interfaces that would otherwise have no fields. The GraphQL spec does not support empty types and this field return type is used to circumvent that requirement. Fields of this type are named "_" and are marked as @deprecated to signify that they should be ignored.
+"""
+scalar Void
