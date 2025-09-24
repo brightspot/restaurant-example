@@ -3,6 +3,7 @@ schema:
       headers:
         X-Client-ID: ${VITE_GRAPHQL_CLIENT_ID}
         X-Client-Secret: ${VITE_GRAPHQL_CLIENT_SECRET}
+documents: src/queries/*.graphql
 generates:
   src/generated/graphql.ts:
     plugins:

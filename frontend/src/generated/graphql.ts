@@ -1,3 +1,4 @@
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -20,3 +21,11 @@ export type RootQuery = {
   __typename: 'RootQuery';
   _?: Maybe<Scalars['Void']['output']>;
 };
+
+export type HealthCheckQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HealthCheckQuery = { __typename: 'RootQuery' };
+
+
+export const HealthCheckDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HealthCheck"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]} as unknown as DocumentNode<HealthCheckQuery, HealthCheckQueryVariables>;
