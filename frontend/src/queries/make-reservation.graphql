@@ -1,0 +1,29 @@
+mutation MakeReservation($args: RecordSaveActionInput!) {
+  Content {
+    Action {
+      Save {
+        Record(args: $args) {
+          state {
+            _id
+            __typename
+            ... on Reservation {
+              customerName
+              customerEmail
+              customerPhone
+              reservationDate
+              reservationTime
+              partySize
+              location {
+                _id
+              }
+              specialRequests
+              status
+              createdDate
+              confirmationNumber
+            }
+          }
+        }
+      }
+    }
+  }
+}
