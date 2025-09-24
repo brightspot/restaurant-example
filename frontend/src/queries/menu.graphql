@@ -1,0 +1,33 @@
+query GetMenu {
+  Get {
+    Singleton {
+      Menu {
+        State {
+          _id
+          __typename
+          categories {
+            __typename
+            _id
+            name
+            description
+            menuItems {
+              __typename
+              _id
+              name
+              description
+              price
+              isSpecial
+              isVegetarian
+              isVegan
+              isGlutenFree
+              isUnavailable
+              image {
+                publicUrl
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
