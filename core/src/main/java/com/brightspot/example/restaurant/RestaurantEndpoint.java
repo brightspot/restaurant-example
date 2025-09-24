@@ -17,6 +17,9 @@ public class RestaurantEndpoint extends GCAEndpoint implements Singleton {
     protected GCASchemaSettings getSchemaSettings() {
         return GCASchemaSettings.newBuilder()
             .readonlyEntryClass(Restaurant.class)
+
+            .fieldFilter(field -> field.getParentType() != null)
+
             .build();
     }
 }
